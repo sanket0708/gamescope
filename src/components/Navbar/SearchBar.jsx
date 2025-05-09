@@ -22,11 +22,11 @@ const SearchBar = ({ onSearch }) => {
       <form onSubmit={handleSearch} className="relative">
         <input
           type="text"
-          placeholder="Search for games by title, genre, or platform..."
+          placeholder="What are you playing next?..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           onKeyPress={handleKeyPress}
-          className="w-full px-4 sm:px-6 py-2 sm:py-3 pl-10 sm:pl-12 text-sm sm:text-base bg-white border-2 border-blue-100 rounded-full shadow-sm focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-blue-200 focus:border-blue-400 transition-all duration-300 ease-in-out placeholder-gray-400"
+          className="w-full px-4 mt-11 sm:px-6 py-2 sm:py-3 pl-10 sm:pl-12 text-sm sm:text-base bg-white border-2 border-blue-100 rounded-full shadow-sm focus:outline-none focus:ring-2 sm:focus:ring-4 focus:ring-blue-200 focus:border-blue-400 transition-all duration-300 ease-in-out placeholder-gray-400"
         />
         <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
           {/* <svg
@@ -44,7 +44,7 @@ const SearchBar = ({ onSearch }) => {
         </div>
         <button
           type="submit"
-          className="absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 p-1 sm:p-2 text-blue-500 hover:bg-blue-50 rounded-full transition-all duration-300 ease-in-out"
+          className="absolute mt-5 right-3 sm:right-2 top-1/2 -translate-y-1/2 p-1 sm:p-2 text-blue-500 hover:bg-blue-50 rounded-full transition-all duration-300 ease-in-out"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

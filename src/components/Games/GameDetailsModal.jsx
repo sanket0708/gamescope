@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
+import { WishlistContext } from '../../context/WishlistContext';
 
 const GameDetailsModal = ({ game, onClose }) => {
   const [gameDetails, setGameDetails] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const { addToWishlist, isInWishlist } = useContext(WishlistContext);
 
   useEffect(() => {
     // Prevent scrolling on mount
@@ -152,6 +154,40 @@ const GameDetailsModal = ({ game, onClose }) => {
                   ))}
                 </div>
               )}
+
+              {/* Play Now and Wishlist Buttons */}
+              <div className="flex space-x-4 mt-4">
+                <motion.a 
+                  href={gameDetails.game_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className="flex-1 bg-blue-600 text-white py-3 rounded-lg text-center font-bold text-lg hover:bg-blue-700 transition-colors duration-300"
+                >
+                  Play Now
+                </motion.a>
+                
+                <motion.button
+                  onClick={() => {
+                    console.log('Adding game to wishlist:', gameDetails);
+                    addToWishlist(gameDetails);
+                  }}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.3 }}
+                  className={`p-3 cursor-pointer rounded-lg transition-colors duration-300 ${
+                    isInWishlist(gameDetails.id) 
+                      ? 'bg-red-500 text-white' 
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }`}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill={isInWishlist(gameDetails.id) ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                  </svg>
+                </motion.button>
+              </div>
             </div>
 
             {/* Game Details */}
@@ -196,14 +232,6 @@ const GameDetailsModal = ({ game, onClose }) => {
               </div>
 
               <div className="flex space-x-4 mt-auto">
-                <a 
-                  href={gameDetails.game_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="px-4 py-2 md:px-6 md:py-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 text-sm md:text-lg font-semibold shadow-md hover:shadow-lg"
-                >
-                  Play Now
-                </a>
               </div>
             </div>
           </div>
