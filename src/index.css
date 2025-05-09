@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+French+Canon+SC&display=swap');
+
+* {
+    font-family: "IM Fell French Canon SC", serif;
+    font-weight: 400;
+    font-style: normal;
+}
