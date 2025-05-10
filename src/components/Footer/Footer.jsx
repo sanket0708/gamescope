@@ -8,12 +8,12 @@ const Footer = () => {
         {/* Top Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 py-12">
           {/* About Section */}
-          <div className="space-y-6">
+          <div className="space-y-6 max-sm:text-center">
             <h3 className="text-xl font-bold mb-4">GameScope</h3>
             <p className="text-gray-400">
               Discover and explore free-to-play games from around the world.
             </p>
-            <div className="flex space-x-4 mt-6">
+            <div className="flex space-x-4 mt-6 max-sm:justify-center">
               <a 
                 href="#"
                 className="text-gray-400 hover:text-white transition-colors duration-200"

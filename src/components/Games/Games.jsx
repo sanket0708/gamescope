@@ -13,52 +13,83 @@ const Games = () => {
   const [itemsPerPage] = useState(9);
   const [currentPageGroup, setCurrentPageGroup] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const pagesToShow = 10;
   const gamesContainerRef = useRef(null);
 
-  const fetchGames = async (page = 1, search = '') => {
+  const GAME_CATEGORIES = [
+    { value: '', label: 'All Categories' },
+    { value: 'shooter', label: 'Shooter' },
+    { value: 'sports', label: 'Sports' },
+    { value: 'strategy', label: 'Strategy' },
+    { value: 'racing', label: 'Racing' },
+    { value: 'fighting', label: 'Fighting' }
+  ];
+
+  const fetchGames = async (page = 1, search = '', category = '') => {
     setLoading(true);
+    setError(null);
     try {
-      const response = await axios.get('https://free-to-play-games-database.p.rapidapi.com/api/games', {
-        params: { page, title: search },
+      const options = {
+        method: 'GET',
+        url: 'https://free-to-play-games-database.p.rapidapi.com/api/games',
+        params: { 
+          platform: 'pc'
+        },
         headers: {
           'x-rapidapi-key': 'cddd97d10bmshb173db3d405a0ffp178473jsn0a4c87c0eda9',
           'x-rapidapi-host': 'free-to-play-games-database.p.rapidapi.com'
         }
-      });
+      };
 
-      // Filter games if search term exists
-      const filteredGames = search
-        ? response.data.filter(game =>
+      const response = await axios.request(options);
+      
+      // Client-side filtering for search and category
+      let filteredGames = response.data;
+      
+      // Log all unique genres for debugging
+      const uniqueGenres = [...new Set(filteredGames.map(game => game.genre.toLowerCase()))];
+      console.log('Unique Genres:', uniqueGenres);
+
+      if (category) {
+        filteredGames = filteredGames.filter(game => {
+          const gameGenre = game.genre.toLowerCase();
+          const matchesCategory = gameGenre.includes(category.toLowerCase());
+          console.log(`Checking game: ${game.title}, Genre: ${gameGenre}, Matches ${category}: ${matchesCategory}`);
+          return matchesCategory;
+        });
+      }
+      
+      if (search) {
+        filteredGames = filteredGames.filter(game => 
           game.title.toLowerCase().includes(search.toLowerCase())
-        )
-        : response.data;
+        );
+      }
 
       setGames(filteredGames);
       setTotalPages(Math.ceil(filteredGames.length / itemsPerPage));
 
-      // Set error message if no games found during search
-      if (search && filteredGames.length === 0) {
-        setError(`No games found for "${search}". Please try another search.`);
-      } else {
-        setError(null);
+      // Set error message if no games found
+      if (filteredGames.length === 0) {
+        setError(`No games found${search ? ` for "${search}"` : ''}${category ? ` in ${category} category` : ''}. Please try another search.`);
       }
+
+      setLoading(false);
     } catch (err) {
-      setError('Failed to fetch games. Please try again later.');
-    } finally {
+      setError('Failed to fetch games. Please try again.');
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchGames();
-  }, []);
+    fetchGames(1, searchTerm, selectedCategory);
+  }, [searchTerm, selectedCategory]);
 
   const handleSearch = (term) => {
     setSearchTerm(term);
     setCurrentPage(1);
     setCurrentPageGroup(1);
-    fetchGames(1, term);
+    fetchGames(1, term, selectedCategory);
   };
 
   const resetSearch = () => {
@@ -68,9 +99,16 @@ const Games = () => {
     fetchGames();
   };
 
+  const handleCategoryChange = (e) => {
+    const category = e.target.value;
+    setSelectedCategory(category);
+    setCurrentPage(1);
+    setCurrentPageGroup(1);
+  };
+
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
-    fetchGames(pageNumber, searchTerm);
+    fetchGames(pageNumber, searchTerm, selectedCategory);
     // Smooth scroll to top
     window.scrollTo({
       top: 0,
@@ -82,7 +120,7 @@ const Games = () => {
     setCurrentPageGroup(currentPageGroup + direction);
     const newPage = currentPageGroup * pagesToShow + 1;
     setCurrentPage(newPage);
-    fetchGames(newPage, searchTerm);
+    fetchGames(newPage, searchTerm, selectedCategory);
     // Smooth scroll to top
     window.scrollTo({
       top: 0,
@@ -107,16 +145,18 @@ const Games = () => {
 
   if (error) {
     return (
-      <div className="text-center py-16">
+      <div className="text-center py-16" style={{ marginTop: '3rem' }}>
         <p className="text-red-500 text-lg font-medium mb-4">{error}</p>
         <button
           onClick={() => {
             setError(null);
+            setSearchTerm('');
+            setSelectedCategory('');
             fetchGames();
           }}
           className="px-6 py-2 cursor-pointer bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors duration-200"
         >
-          Try Again
+          Back to All Games
         </button>
       </div>
     );
@@ -165,12 +205,69 @@ const Games = () => {
   return (
     <div className="min-h-screen bg-blue-200 py-6 md:py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
-        {/* Search Bar */}
-        <div className="mb-8 md:mb-12">
-          <SearchBar onSearch={handleSearch} />
+        {/* Search and Category Filters */}
+        <div className="flex flex-col md:flex-row items-end space-y-4 md:space-y-0 md:space-x-4 mb-8 md:mb-12">
+          {/* Search Bar Container */}
+          <div className="w-full md:flex-grow">
+            <SearchBar onSearch={handleSearch} />
+          </div>
+          
+          {/* Category Dropdown Container */}
+          <div className="w-full md:w-auto mt-2 md:mt-0">
+            <div className="relative">
+              <select
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                className="
+                  w-full md:w-48 
+                  px-4 py-2.5 
+                  pr-8 
+                  text-sm 
+                  text-gray-700 
+                  bg-white 
+                  border 
+                  border-gray-300 
+                  rounded-lg 
+                  shadow-sm 
+                  focus:outline-none 
+                  focus:ring-2 
+                  focus:ring-blue-500 
+                  focus:border-blue-500 
+                  appearance-none 
+                  cursor-pointer 
+                  transition-all 
+                  duration-300 
+                  ease-in-out 
+                  hover:bg-gray-50
+                "
+              >
+                {GAME_CATEGORIES.map((category) => (
+                  <option 
+                    key={category.value} 
+                    value={category.value}
+                    className="hover:bg-blue-100"
+                  >
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+              {/* Custom dropdown arrow */}
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg 
+                  className="fill-current h-4 w-4" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 0 20 20"
+                >
+                  <path 
+                    d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
         </div>
-
-        {searchTerm && (
+        
+        {searchTerm && !error && currentGames.length > 0 && (
           <div className="flex justify-center mb-6">
             <button
               onClick={resetSearch}
