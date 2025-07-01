@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { WishlistContext } from '../../context/WishlistContext';
+import iconTop from "../../assets/joyf3.png";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -79,7 +80,7 @@ const Navbar = () => {
                 <span className="absolute bottom-0 left-0 w-full h-0.5 bg-white opacity-0 group-hover:opacity-100 transition-all duration-300"></span>
               </span>
             </Link>
-            
+
             {/* Wishlist Icon for Desktop */}
             <Link to="/wishlist" className="relative group px-3 py-2 rounded-md text-sm font-medium">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-gray-200 group-hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -129,7 +130,7 @@ const Brand = () => {
   return (
     <div className="flex items-center cursor-pointer" onClick={() => window.location.href = '/'}>
       <img
-        src="/src/assets/joyf3.png"
+        src={iconTop}
         alt="GameScope Logo"
         className="h-10 w-12 mr-2"
       />

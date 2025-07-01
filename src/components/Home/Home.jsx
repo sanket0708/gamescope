@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { FaQuoteLeft, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import heroPoster from '../../assets/hero-poster.jpg';
 
 const testimonials = [
   {
@@ -101,7 +102,7 @@ const Home = () => {
               duration: 1, 
               ease: "easeOut" 
             }}
-            src="../src/assets/hero-poster.jpg"
+            src={heroPoster}
             alt="Featured Game"
             className="w-full h-full object-cover filter blur-[2px]"
           />
