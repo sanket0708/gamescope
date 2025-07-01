@@ -32,3 +32,7 @@ Built with **React** and styled using **Tailwind CSS**.
 
 ---
 
+## 📸 Screenshots
+
+![g1](https://github.com/user-attachments/assets/4222ccfe-90f0-4427-9810-3a67b9ca0afa)
+![g2](https://github.com/user-attachments/assets/d7f17fa7-613b-4b57-b23d-145cf4067fe7)
